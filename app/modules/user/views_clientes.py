@@ -19,12 +19,18 @@ def create_cliente(cliente: schemas.ClienteCreate, db: Session = Depends(get_db)
     if db_cliente:
         raise HTTPException(status_code=400, detail="El número de teléfono ya está registrado")
     
+    # Verificar si la cédula ya existe
+    db_cliente = db.query(models.Cliente).filter(models.Cliente.cedula == cliente.cedula).first()
+    if db_cliente:
+        raise HTTPException(status_code=400, detail="La cédula ya está registrada")
+    
     if not cliente.fecha_registro:
         cliente.fecha_registro = date.today()
     db_cliente = models.Cliente(
         nombre=cliente.nombre,
         telefono=cliente.telefono,
         email=cliente.email,
+        cedula=cliente.cedula,
         fecha_registro=cliente.fecha_registro
     )
     db.add(db_cliente)
@@ -57,9 +63,15 @@ def update_cliente(cliente_id: UUID, cliente: schemas.ClienteCreate, db: Session
     if db_cliente_telefono:
         raise HTTPException(status_code=400, detail="El número de teléfono ya está registrado")
     
+    # Verificar si la cédula ya existe y pertenece a otro cliente
+    db_cliente_cedula = db.query(models.Cliente).filter(models.Cliente.cedula == cliente.cedula, models.Cliente.id_cliente != cliente_id).first()
+    if db_cliente_cedula:
+        raise HTTPException(status_code=400, detail="La cédula ya está registrada")
+    
     db_cliente.nombre = cliente.nombre
     db_cliente.telefono = cliente.telefono
     db_cliente.email = cliente.email
+    db_cliente.cedula = cliente.cedula
     if cliente.fecha_registro:
         db_cliente.fecha_registro = cliente.fecha_registro
     db.commit()

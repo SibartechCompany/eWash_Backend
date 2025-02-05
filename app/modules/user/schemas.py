@@ -9,6 +9,7 @@ class ClienteBase(BaseModel):
     nombre: str
     telefono: str
     email: str
+    cedula: str
 
 class ClienteCreate(ClienteBase):
     fecha_registro: Optional[date] = None

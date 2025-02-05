@@ -10,6 +10,7 @@ class Cliente(Base):
     nombre = Column(String, nullable=False)
     telefono = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
+    cedula = Column(String, unique=True, nullable=False)
     fecha_registro = Column(Date, nullable=False)
 
 class Empleado(Base):
