@@ -8,6 +8,8 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")  # La URL de Railway
 
+print(DATABASE_URL)
+
 # Crear el motor de la base de datos
 engine = create_engine(DATABASE_URL)
 
@@ -18,8 +20,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # Función para crear las tablas
+
+
 def create_tables():
     Base.metadata.create_all(bind=engine)
+
 
 def get_db():
     db = SessionLocal()

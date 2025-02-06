@@ -11,9 +11,9 @@ class OrdenServicio(Base):
     id_orden = Column(UUID(as_uuid=True), primary_key=True,
                       default=uuid.uuid4, index=True)
     id_vehiculo = Column(UUID(as_uuid=True),
-                         ForeignKey("vehiculos.id_vehiculo"))
+                         ForeignKey("vehiculo.id_vehiculo"))
     id_empleado = Column(UUID(as_uuid=True),
-                         ForeignKey("empleados.id_empleado"))
+                         ForeignKey("empleado.id_empleado"))
     fecha_orden = Column(Date, nullable=False)
     # pendiente, en proceso, completado
     estado = Column(String, nullable=False)

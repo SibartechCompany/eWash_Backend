@@ -5,13 +5,14 @@ from sqlalchemy import pool
 
 from alembic import context
 from app.core.database import Base
+from app.modules.lavado.models import *
+from app.modules.orden.models import *
+from app.modules.user.models import *
+from app.modules.vehiculo.models import *
 
-import os
 
-
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
 config = context.config
+
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -61,12 +62,9 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    DATABASE_URL = os.getenv("DATABASE_URL")
-
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
-        url=DATABASE_URL,
         poolclass=pool.NullPool,
     )
 
