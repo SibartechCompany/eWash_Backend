@@ -1,15 +1,14 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 from app.core.database import Base
 from app.modules.lavado.models import *
 from app.modules.orden.models import *
+from app.modules.roles.models import *
 from app.modules.user.models import *
 from app.modules.vehiculo.models import *
-
 
 config = context.config
 

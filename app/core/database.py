@@ -1,14 +1,14 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 import os
+
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Cargar variables de entorno desde .env
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")  # La URL de Railway
+DATABASE_URL = os.getenv("DATABASE_URL") # La URL de Railway
 
-print(DATABASE_URL)
 
 # Crear el motor de la base de datos
 engine = create_engine(DATABASE_URL)
