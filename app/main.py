@@ -1,18 +1,13 @@
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from app.core.database import Base, engine
-from app.modules.user import models as user_models
-from app.modules.vehiculo import models as vehiculo_models
-from app.modules.orden import models as orden_models
-from app.modules.lavado import models as lavado_models
-from app.routers import router as user_router
+from app.api.api_v1.api import api_router
+from app.core.config import settings
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("Creando tablas si no existen...")
-    Base.metadata.create_all(bind=engine)  # Crea las tablas en la BD
-    yield  # Aquí podrías añadir código para limpiar recursos si fuera necesario uvicorn app.main:app --reload
+app = FastAPI(
+    title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
 
-app = FastAPI(lifespan=lifespan)
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
-app.include_router(user_router, prefix="/api/v1")
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the eWash API"}

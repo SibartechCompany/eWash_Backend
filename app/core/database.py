@@ -1,26 +1,14 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-import os
-from dotenv import load_dotenv
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from app.core.config import settings
 
-# Cargar variables de entorno desde .env
-load_dotenv()
-
-DATABASE_URL = os.getenv("DATABASE_URL")  # La URL de Railway
-
-# Crear el motor de la base de datos
-engine = create_engine(DATABASE_URL)
-
-# Crear sesión
+engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base para los modelos
 Base = declarative_base()
 
-# Función para crear las tablas
-def create_tables():
-    Base.metadata.create_all(bind=engine)
-
+# Dependency
 def get_db():
     db = SessionLocal()
     try:
