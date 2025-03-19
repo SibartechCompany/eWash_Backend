@@ -66,3 +66,8 @@ def authenticate(db: Session, *, username: str, password: str) -> Optional[Admin
     if not verify_password(password, user.password):
         return None
     return user
+
+def count(db: Session) -> int:
+    return db.query(Administrador).count()
+
+

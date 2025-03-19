@@ -4,11 +4,15 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.core.config import settings
 from app.api.api_v1.api import api_router
 from app.core.deps import get_current_active_user
+from app.core.database import create_tables
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+create_tables()
+
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
