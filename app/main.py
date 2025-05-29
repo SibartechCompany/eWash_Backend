@@ -1,18 +1,59 @@
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from app.core.database import Base, engine
-from app.modules.user import models as user_models
-from app.modules.vehiculo import models as vehiculo_models
-from app.modules.orden import models as orden_models
-from app.modules.lavado import models as lavado_models
-from app.routers import router as user_router
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
+from app.core.database import init_db, test_db_connection
+from app.api.router import api_router
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("Creando tablas si no existen...")
-    Base.metadata.create_all(bind=engine)  # Crea las tablas en la BD
-    yield  # Aquí podrías añadir código para limpiar recursos si fuera necesario uvicorn app.main:app --reload
+# Create FastAPI app
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    debug=settings.DEBUG
+)
 
-app = FastAPI(lifespan=lifespan)
+# Set up CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-app.include_router(user_router, prefix="/api/v1")
+# Include API router
+app.include_router(api_router, prefix=settings.API_V1_STR)
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup"""
+    print("Starting eWash API...")
+    
+    # Test database connection
+    db_connected = await test_db_connection()
+    if db_connected:
+        print("✅ Database connection successful")
+        # Initialize database tables
+        await init_db()
+        print("✅ Database tables initialized")
+    else:
+        print("❌ Database connection failed")
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "Welcome to eWash API",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "redoc": "/redoc"
+    }
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    db_status = await test_db_connection()
+    return {
+        "status": "healthy" if db_status else "unhealthy",
+        "database": "connected" if db_status else "disconnected",
+        "api": "running"
+    } 
